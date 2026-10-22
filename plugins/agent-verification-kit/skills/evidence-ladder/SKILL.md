@@ -1,8 +1,9 @@
 ---
 name: evidence-ladder
-description: What counts as proof that something works, and how to get it. Load this before saying "done", "fixed", "verified", "healthy", "it works" or "it does not exist", whenever someone asks "is it working?", "can you verify that?", "smoke test it", "did it run?", or when the only evidence so far is a 200, an exit code 0, a green health check, an empty grep, a model listing, a clean build, or a subagent's summary. Also load it before writing a new smoke test, load test, hook test or acceptance check.
+description: "What counts as proof that something works, and how to get it. Load this before saying \"done\", \"fixed\", \"verified\", \"healthy\", \"it works\" or \"it does not exist\", whenever someone asks \"is it working?\", \"can you verify that?\", \"smoke test it\", \"did it run?\", or when the only evidence so far is a 200, an exit code 0, a green health check, an empty grep, a model listing, a clean build, or a subagent's summary. Also load it before writing a new smoke test, load test, hook test or acceptance check."
+license: MIT
+version: 0.1.0
 ---
-
 # Evidence ladder: verify by effect, never by proxy
 
 A **proxy** is a cheap signal that usually travels with "it works" but does not prove it: an HTTP 200, exit code 0, an empty grep, a green `/health`, a tool listing, a compile that passed, a report that says so. Every one of these has said "works" while the real thing was broken. The rule of this skill:

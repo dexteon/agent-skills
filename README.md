@@ -1,25 +1,39 @@
-# agent-skills
+# Claude Code skills that stop AI agents from faking success
 
-Field-tested skills for Claude Code and other agents that load `SKILL.md` files (Hermes, and anything that follows the same format). Each one came out of a real failure: an agent said "done" on a 200, quoted a number it never measured, or executed a plan that named the wrong file.
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757.svg)](#install)
+[![Release](https://img.shields.io/github/v/release/dexteon/agent-skills)](https://github.com/dexteon/agent-skills/releases)
+
+**agent-skills** is a Claude Code plugin marketplace of field-tested skills for AI coding agents. They also work with any agent that loads `SKILL.md` folders, such as Hermes. Every skill came out of a real failure in daily agent work and teaches the agent the habit that would have caught it.
 
 Built and maintained by [CyberAutomations](https://cyberautomations.com).
+
+## Why these exist
+
+Agents are confident by default. These are the kinds of mistakes the skills catch:
+
+- **A cached answer passed as a live one.** An LLM gateway smoke test "passed" in 0.027 s. The first call took 0.41 s and the second returned the same response id: it came from a response cache, so nothing was tested.
+- **A 200 with nothing in it.** A reasoning model returned HTTP 200 with `content: null` because every one of its 16 output tokens went to reasoning.
+- **A speedup that was not real.** A "3.3x faster" result showed zero change in production. The control run had shared its network link with a live job.
+- **A plan that named the wrong file.** The plan said to edit `src/rules.py`. The loader imports `src/core/rules.py`. The change would have done nothing and every test would still pass.
+- **A model that "fit" in VRAM.** The first deploy ran out of memory by 166 MiB. The estimate reused a safety margin from a different model; measured use per slot was 10,214 MiB against 8.3 to 8.7 GiB on paper.
 
 ## Plugins
 
 ### agent-verification-kit
 
-Stop agents from reporting false success.
+Verification, measurement and review habits for Claude Code and other AI agents.
 
-| Skill | What it does |
-|---|---|
-| [evidence-ladder](plugins/agent-verification-kit/skills/evidence-ladder/SKILL.md) | Verify by effect, never by proxy. Named evidence levels, a catalogue of proxy traps (a 200 from a cache, a fallback answering for a dead primary, a reasoning model returning empty content), and small probe scripts. |
-| [measure-before-you-quote](plugins/agent-verification-kit/skills/measure-before-you-quote/SKILL.md) | Measure before stating a number: VRAM and KV-cache math, cost per unit of work instead of per hour, measurement windows, and a baseline before calling a difference real. |
-| [artifact-review](plugins/agent-verification-kit/skills/artifact-review/SKILL.md) | Check a plan, report or handoff against the live system before anyone acts on it, then fix the wrong sentences in place. |
-| [api-verification](plugins/agent-verification-kit/skills/api-verification/SKILL.md) | Get evidence for a library's installed API before changing calls into it, and gate remote writes behind approval. |
+| Skill | What it does | Loads when you say |
+|---|---|---|
+| [evidence-ladder](plugins/agent-verification-kit/skills/evidence-ladder/SKILL.md) | Verify by effect, never by proxy. Named evidence levels, a catalogue of proxy traps, and probe scripts for HTTP endpoints, LLM gateways and Claude Code hooks. | "is it working", "verify that", "smoke test it", "it returned 200" |
+| [measure-before-you-quote](plugins/agent-verification-kit/skills/measure-before-you-quote/SKILL.md) | Measure before stating a number: VRAM and KV-cache math, cost per unit of work instead of per hour, measurement windows, and a baseline before calling a difference real. | "how much VRAM", "will it fit", "is X faster", "what does this cost" |
+| [artifact-review](plugins/agent-verification-kit/skills/artifact-review/SKILL.md) | Check a plan, report or handoff against the live system before anyone acts on it, then fix the wrong sentences in place. | "review this plan", "check the handoff" |
+| [api-verification](plugins/agent-verification-kit/skills/api-verification/SKILL.md) | Get evidence for a library's installed API before changing calls into it, and require approval before remote writes. | a `TypeError` or `ImportError` from a library, "plan only" |
 
 ## Install
 
-### Claude Code (plugin marketplace)
+### Claude Code plugin marketplace
 
 ```
 /plugin marketplace add dexteon/agent-skills
@@ -28,12 +42,12 @@ Stop agents from reporting false success.
 
 ### Any agent that reads SKILL.md folders
 
-Copy a skill folder into your agent's skills directory, for example:
-
 ```bash
 git clone https://github.com/dexteon/agent-skills
 cp -r agent-skills/plugins/agent-verification-kit/skills/evidence-ladder ~/.claude/skills/
 ```
+
+The scripts are plain Python 3 (one PowerShell) with no required dependencies. Each one supports `--help`.
 
 ## Contributing
 
@@ -41,8 +55,8 @@ Issues and pull requests are welcome. A good report includes the failure the ski
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE). Release notes are in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
-Need agent workflows like these built for your team? Visit [cyberautomations.com](https://cyberautomations.com).
+Want agent workflows like these built for your team? [CyberAutomations](https://cyberautomations.com) designs and runs AI automation for small businesses and creators.
