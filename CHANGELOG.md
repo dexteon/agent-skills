@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.0 (2026-10-21)
+
+- New **windows-agent-survival** plugin with two skills:
+  - `git-bash-on-windows`: the top traps for agents on Windows (MSYS path rewriting, `cd /d`, backslashes eaten in heredocs, CRLF rewrites, PowerShell 5.1 vs 7, killing by captured PID, background jobs, retry loops, Npcap notes), each with symptom, cause and fix. Path behaviors verified live on Windows 11.
+  - `everything-search`: file search with voidtools Everything's `es.exe`, its silent-failure traps (missing `-instance`, `-p` vs `-path`, `a | b` vs `a|b`), and `es_find.py`, a wrapper that runs a positive control before the real query.
+
 ## v0.1.0 (2026-10-21)
 
 First release.

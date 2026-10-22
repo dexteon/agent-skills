@@ -11,6 +11,11 @@
       "name": "agent-verification-kit",
       "description": "Stop agents from reporting false success: evidence ladders, measure-before-you-quote, artifact review and API verification.",
       "source": "./plugins/agent-verification-kit"
+    },
+    {
+      "name": "windows-agent-survival",
+      "description": "Git Bash and PowerShell traps that fake success on Windows, safe process control, and instant file search with Everything.",
+      "source": "./plugins/windows-agent-survival"
     }
   ]
 }

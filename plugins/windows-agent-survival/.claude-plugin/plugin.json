@@ -1,0 +1,13 @@
+{
+  "name": "windows-agent-survival",
+  "version": "0.1.0",
+  "description": "Fixes for AI coding agents running shell commands on Windows: Git Bash and PowerShell traps that silently fake success, process control that does not kill the wrong thing, and instant file search with Everything instead of slow recursive walks.",
+  "author": {
+    "name": "CyberAutomations",
+    "url": "https://cyberautomations.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/dexteon/agent-skills",
+  "repository": "https://github.com/dexteon/agent-skills",
+  "skills": ["./skills/"]
+}
