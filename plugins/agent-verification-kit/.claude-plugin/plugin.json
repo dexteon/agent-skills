@@ -1,0 +1,13 @@
+{
+  "name": "agent-verification-kit",
+  "version": "0.1.0",
+  "description": "Stop agents from reporting false success: verify by effect (evidence ladder), measure before quoting numbers, review artifacts against the live system, and check a library's installed API before calling it.",
+  "author": {
+    "name": "CyberAutomations",
+    "url": "https://cyberautomations.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/dexteon/agent-skills",
+  "repository": "https://github.com/dexteon/agent-skills",
+  "skills": ["./skills/"]
+}
