@@ -2,8 +2,8 @@
 name: artifact-review
 description: "Check a written artifact's claims against the live system before anyone acts on it. Load when asked to review a plan, report, spec, handoff or summary from another session or agent: \"review this plan\", \"is this handoff right\", \"check it before we integrate\", \"make sure the plan is sound\"."
 license: MIT
+version: 0.1.0
 ---
-
 # Artifact review
 
 A plan written by another session or agent reads as confident whether or not it is true. Before anyone executes it, check every concrete claim against the system it describes, fix what is wrong in place, and report the fixes.

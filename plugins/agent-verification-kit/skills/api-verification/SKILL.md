@@ -2,8 +2,8 @@
 name: api-verification
 description: "Get evidence for a library's real API before changing calls into it. Load before editing code that calls a third-party library, after a TypeError, AttributeError or ImportError from one, on a plan-only turn, or before any push, publish, remote API write or message send."
 license: MIT
+version: 0.1.0
 ---
-
 # API verification
 
 Guessing at a library's arguments wastes turns, and some guesses change real state. The rule: get evidence for the API that is actually installed, then make one change backed by that evidence.

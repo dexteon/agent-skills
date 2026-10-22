@@ -1,8 +1,9 @@
 ---
 name: measure-before-you-quote
-description: Measure before you quote a number. Load this before stating a rate, a utilization, an ETA, "how much VRAM", "will it fit", "is X faster than Y", "what does this cost", a capacity or slot projection, a benchmark result, or "X caused Y". It holds seven measurement recipes (real workload, stated window, matched null, KV-cache and VRAM math, cost per unit of work, container metrics, one-mechanism-explains-all), scripts that do the arithmetic, and anonymized incidents showing the size of each mistake.
+description: "Measure before you quote a number. Load this before stating a rate, a utilization, an ETA, \"how much VRAM\", \"will it fit\", \"is X faster than Y\", \"what does this cost\", a capacity or slot projection, a benchmark result, or \"X caused Y\". It holds seven measurement recipes (real workload, stated window, matched null, KV-cache and VRAM math, cost per unit of work, container metrics, one-mechanism-explains-all), scripts that do the arithmetic, and anonymized incidents showing the size of each mistake."
+license: MIT
+version: 0.1.0
 ---
-
 # Measure before you quote
 
 The expensive mistakes in capacity, cost and performance work are rarely bad code. They are confident numbers taken from the wrong measurement: a 26 second window, a 32-token prompt, one `nvidia-smi` sample, a before/after pair with no control, a memory figure that included something that had already been unloaded. Each one looked authoritative, and someone planned around it.
