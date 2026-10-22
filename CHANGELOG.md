@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.3.0 (2026-10-22)
+
+- New **multi-agent-orchestration** plugin with five skills:
+  - `fanout-orchestration`: coordinate parallel subagents on Claude Code (`Agent`, `SendMessage`, `TaskStop`) or Hermes (`delegate_task`): a wall-clock budget in every goal, one probe before the batch commits, single-writer discipline, steer instead of respawn, and a verify-before-you-write-the-board checklist. References: tool map for both runtimes, TRUNCATED and dead-child recovery, LLM-proxy worker harnesses, one-shot review fan-out.
+  - `hermes-bot-team` (Hermes): isolated profile teams with secrets tiering, what a new profile does not inherit, the delegation cap, and a kanban CLI cheatsheet.
+  - `hermes-kanban-project-launch` (Hermes): the explore-to-dispatch pipeline for board-driven refactors, with `kanban_graph.py` (creates a dependency-linked task graph from JSON, parents first).
+  - `hermes-kanban-triage-and-chains` (Hermes): moving a card out of `triage`, and sequential board chains with `chain_boards.py` as a no-agent cron poller.
+  - `hermes-kanban-field-notes` (Hermes): reliable CLI and SQLite queries, the board schema, `task_events` kinds.
+  - Hermes commands and flags were checked against Hermes 0.21.3. Two corrections to earlier notes: `--priority` sorts higher-first (not 1 = critical), and task ids are `t_` plus 8 hex characters.
+
 ## v0.2.0 (2026-10-21)
 
 - New **windows-agent-survival** plugin with two skills:

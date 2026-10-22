@@ -1,0 +1,13 @@
+{
+  "name": "multi-agent-orchestration",
+  "version": "0.3.0",
+  "description": "Coordinate parallel AI subagents without a silently broken task graph: give every child a budget, probe the path before the batch, verify every self-reported done, steer instead of respawn. Plus Hermes-specific skills for bot-profile teams and kanban boards, with the CLI traps mapped.",
+  "author": {
+    "name": "CyberAutomations",
+    "url": "https://cyberautomations.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/dexteon/agent-skills",
+  "repository": "https://github.com/dexteon/agent-skills",
+  "skills": ["./skills/"]
+}
