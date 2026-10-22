@@ -31,6 +31,15 @@ Verification, measurement and review habits for Claude Code and other AI agents.
 | [artifact-review](plugins/agent-verification-kit/skills/artifact-review/SKILL.md) | Check a plan, report or handoff against the live system before anyone acts on it, then fix the wrong sentences in place. | "review this plan", "check the handoff" |
 | [api-verification](plugins/agent-verification-kit/skills/api-verification/SKILL.md) | Get evidence for a library's installed API before changing calls into it, and require approval before remote writes. | a `TypeError` or `ImportError` from a library, "plan only" |
 
+### windows-agent-survival
+
+For agents running shell commands on Windows, where Git Bash and PowerShell make commands look successful while they quietly do the wrong thing.
+
+| Skill | What it does | Loads when you say |
+|---|---|---|
+| [git-bash-on-windows](plugins/windows-agent-survival/skills/git-bash-on-windows/SKILL.md) | The top traps with symptom, cause and fix: MSYS path rewriting, `cd /d`, backslashes eaten in heredocs, CRLF rewrites, `powershell` 5.1 vs `pwsh` 7, killing by captured PID, background jobs that die, and retry loops. | "Git Bash", "path mangling", "command not found", "process won't die" |
+| [everything-search](plugins/windows-agent-survival/skills/everything-search/SKILL.md) | Find files by name in under a second with Everything's `es.exe` instead of a recursive walk, plus the flags that silently return nothing. Includes a wrapper that runs a positive control first. | "where is X", "find all *.ext", "biggest files under" |
+
 ## Install
 
 ### Claude Code plugin marketplace
@@ -38,6 +47,7 @@ Verification, measurement and review habits for Claude Code and other AI agents.
 ```
 /plugin marketplace add dexteon/agent-skills
 /plugin install agent-verification-kit@dexteon-agent-skills
+/plugin install windows-agent-survival@dexteon-agent-skills
 ```
 
 ### Any agent that reads SKILL.md folders
