@@ -17,6 +17,7 @@ Agents are confident by default. These are the kinds of mistakes the skills catc
 - **A speedup that was not real.** A "3.3x faster" result showed zero change in production. The control run had shared its network link with a live job.
 - **A plan that named the wrong file.** The plan said to edit `src/rules.py`. The loader imports `src/core/rules.py`. The change would have done nothing and every test would still pass.
 - **A model that "fit" in VRAM.** The first deploy ran out of memory by 166 MiB. The estimate reused a safety margin from a different model; measured use per slot was 10,214 MiB against 8.3 to 8.7 GiB on paper.
+- **A subagent that said "written".** The child's summary reported the deliverable saved. The file was not there: its final write had been rejected and the child never noticed. The sibling that was respawned from zero to redo it threw away thirty minutes of verified work that was sitting in the dead child's transcript.
 
 ## Plugins
 
@@ -40,6 +41,18 @@ For agents running shell commands on Windows, where Git Bash and PowerShell make
 | [git-bash-on-windows](plugins/windows-agent-survival/skills/git-bash-on-windows/SKILL.md) | The top traps with symptom, cause and fix: MSYS path rewriting, `cd /d`, backslashes eaten in heredocs, CRLF rewrites, `powershell` 5.1 vs `pwsh` 7, killing by captured PID, background jobs that die, and retry loops. | "Git Bash", "path mangling", "command not found", "process won't die" |
 | [everything-search](plugins/windows-agent-survival/skills/everything-search/SKILL.md) | Find files by name in under a second with Everything's `es.exe` instead of a recursive walk, plus the flags that silently return nothing. Includes a wrapper that runs a positive control first. | "where is X", "find all *.ext", "biggest files under" |
 
+### multi-agent-orchestration
+
+For agents that coordinate other agents. The headline skill is runtime-neutral and maps its tools to both Claude Code (`Agent`, `SendMessage`, `TaskStop`) and Hermes (`delegate_task`). The other four are **Hermes-specific**: they drive `hermes profile` and `hermes kanban` and were checked against Hermes 0.21.3; load them only on a Hermes setup.
+
+| Skill | What it does | Loads when you say |
+|---|---|---|
+| [fanout-orchestration](plugins/multi-agent-orchestration/skills/fanout-orchestration/SKILL.md) | Coordinate parallel subagents: a wall-clock budget in every goal, one probe before the batch commits, single-writer discipline, steer instead of respawn, and a checklist that verifies every self-reported "done" before it is written down. References cover TRUNCATED and dead-child recovery, LLM-proxy workers, and one-shot review fan-out. | "fan out", "spawn N agents", "start all of them", "cut back to N", a child reports done or TRUNCATED |
+| [hermes-bot-team](plugins/multi-agent-orchestration/skills/hermes-bot-team/SKILL.md) | Hermes. Build a team of isolated profiles (role, model, secrets tier, toolsets, MCPs each) and run them through `delegate_task` or a kanban board. What a new profile does not inherit, the delegation cap, secrets tiering, the kanban flags that differ from what you would guess. | "build a team of bots", "add N more bots", a new profile cannot use web search |
+| [hermes-kanban-project-launch](plugins/multi-agent-orchestration/skills/hermes-kanban-project-launch/SKILL.md) | Hermes. Explore, classify, design, spec, decompose into a dependency-linked task graph, create an isolated board, dispatch, gate with safety and code review. Ships `kanban_graph.py` (parents first, ids captured, missing parents refused). | "unify this project", "refactor it with a kanban board" |
+| [hermes-kanban-triage-and-chains](plugins/multi-agent-orchestration/skills/hermes-kanban-triage-and-chains/SKILL.md) | Hermes. Move a card the dispatcher parked in `triage` (no normal command does), and run boards in sequence with a blocked gate plus `chain_boards.py` as a no-agent cron poller. | status `triage`, "kick off the next board when this one finishes" |
+| [hermes-kanban-field-notes](plugins/multi-agent-orchestration/skills/hermes-kanban-field-notes/SKILL.md) | Hermes. Query boards reliably from the CLI and straight from each board's SQLite file: `--json` forms, the DB path, tables and `task_events` kinds, why `show` says "no such task" for a real id. | wrong board's tasks, "no such task", "is anything happening on this board" |
+
 ## Install
 
 ### Claude Code plugin marketplace
@@ -48,6 +61,7 @@ For agents running shell commands on Windows, where Git Bash and PowerShell make
 /plugin marketplace add dexteon/agent-skills
 /plugin install agent-verification-kit@dexteon-agent-skills
 /plugin install windows-agent-survival@dexteon-agent-skills
+/plugin install multi-agent-orchestration@dexteon-agent-skills
 ```
 
 ### Any agent that reads SKILL.md folders
@@ -57,7 +71,7 @@ git clone https://github.com/dexteon/agent-skills
 cp -r agent-skills/plugins/agent-verification-kit/skills/evidence-ladder ~/.claude/skills/
 ```
 
-The scripts are plain Python 3 (one PowerShell) with no required dependencies. Each one supports `--help`.
+The scripts are plain Python 3 (one PowerShell) with no required dependencies. Each one supports `--help`. The two kanban scripts call the `hermes` CLI and are only useful on a Hermes setup.
 
 ## Contributing
 

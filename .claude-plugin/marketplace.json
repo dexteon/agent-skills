@@ -16,6 +16,11 @@
       "name": "windows-agent-survival",
       "description": "Git Bash and PowerShell traps that fake success on Windows, safe process control, and instant file search with Everything.",
       "source": "./plugins/windows-agent-survival"
+    },
+    {
+      "name": "multi-agent-orchestration",
+      "description": "Coordinate parallel subagents without a silently broken task graph: budget, probe, verify every self-reported done, steer instead of respawn. Plus Hermes bot-team and kanban field notes.",
+      "source": "./plugins/multi-agent-orchestration"
     }
   ]
 }
