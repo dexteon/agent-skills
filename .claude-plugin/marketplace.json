@@ -21,6 +21,11 @@
       "name": "multi-agent-orchestration",
       "description": "Coordinate parallel subagents without a silently broken task graph: budget, probe, verify every self-reported done, steer instead of respawn. Plus Hermes bot-team and kanban field notes.",
       "source": "./plugins/multi-agent-orchestration"
+    },
+    {
+      "name": "hermes-claude-bridge",
+      "description": "Two-way messaging between Claude Code and Hermes Agent sessions: Hermes asks idle Claude sessions for help, Claude messages a running Hermes chat. Validated refs, scrubbed and fenced peer data, hop cap, pointer-only headless sends.",
+      "source": "./plugins/hermes-claude-bridge"
     }
   ]
 }

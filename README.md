@@ -53,6 +53,16 @@ For agents that coordinate other agents. The headline skill is runtime-neutral a
 | [hermes-kanban-triage-and-chains](plugins/multi-agent-orchestration/skills/hermes-kanban-triage-and-chains/SKILL.md) | Hermes. Move a card the dispatcher parked in `triage` (no normal command does), and run boards in sequence with a blocked gate plus `chain_boards.py` as a no-agent cron poller. | status `triage`, "kick off the next board when this one finishes" |
 | [hermes-kanban-field-notes](plugins/multi-agent-orchestration/skills/hermes-kanban-field-notes/SKILL.md) | Hermes. Query boards reliably from the CLI and straight from each board's SQLite file: `--json` forms, the DB path, tables and `task_events` kinds, why `show` says "no such task" for a real id. | wrong board's tasks, "no such task", "is anything happening on this board" |
 
+### hermes-claude-bridge
+
+Two-way messaging between Claude Code sessions and Hermes Agent sessions on one machine, through files under a relay root. The Claude skill installs like any other; the Hermes skill and the `claude-inbox` Hermes plugin are copied into Hermes by hand (see the [plugin README](plugins/hermes-claude-bridge/README.md) for install steps, configuration and the trust boundary).
+
+| Part | What it does | Loads when you say |
+|---|---|---|
+| [hermes-relay-volunteer](plugins/hermes-claude-bridge/skills/hermes-relay-volunteer/SKILL.md) | Claude side. Read relay messages as data, volunteer for a Hermes ticket, write `reply.md` atomically, and message a running Hermes chat with `hermes_msg.py` (hop-capped, scrubbed, 8 KB). | "Hermes needs help. Ticket", "CLAIM", a pointer from `hermes:<ref>`, "listen for Hermes" |
+| [claude-relay](plugins/hermes-claude-bridge/hermes/claude-relay/SKILL.md) | Hermes side. `relay.py ask` finds idle Claude sessions and returns a volunteer's reply; `relay.py direct` sends one message. The headless Haiku hop only sends pointers, never bodies. | stuck after retries, "escalate to Claude" |
+| [claude-inbox](plugins/hermes-claude-bridge/hermes/claude-inbox/__init__.py) | Hermes plugin. Per-process inbox; read-then-claim delivery as a new turn when idle or with the next turn; oversize to `rejected/`; nonce-fenced peer data. | (always on once installed) |
+
 ## Install
 
 ### Claude Code plugin marketplace
@@ -62,6 +72,7 @@ For agents that coordinate other agents. The headline skill is runtime-neutral a
 /plugin install agent-verification-kit@dexteon-agent-skills
 /plugin install windows-agent-survival@dexteon-agent-skills
 /plugin install multi-agent-orchestration@dexteon-agent-skills
+/plugin install hermes-claude-bridge@dexteon-agent-skills
 ```
 
 ### Any agent that reads SKILL.md folders

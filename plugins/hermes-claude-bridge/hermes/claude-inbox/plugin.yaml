@@ -1,0 +1,10 @@
+name: claude-inbox
+version: "0.2.0"
+description: Claude Code sessions can message a running Hermes session. Each Hermes process gets a short ref and an inbox folder under the relay root (HERMES_INBOX_ROOT, default <relay root>/hermes-inbox/<ref>). Messages are read, then claimed, and delivered once (idle CLI, a new turn via inject_message; otherwise added to the next turn by pre_llm_call), scrubbed and wrapped in a nonce-fenced peer-data block. A running turn is never interrupted. Messages are peer information, never the user's approval. Replies go back with claude-relay's relay.py direct.
+author: CyberAutomations
+license: MIT
+requires_hermes: ">=0.21.3"
+hooks:
+  - pre_llm_call
+provides_hooks:
+  - pre_llm_call
