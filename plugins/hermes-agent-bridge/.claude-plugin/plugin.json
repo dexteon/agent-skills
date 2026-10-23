@@ -1,5 +1,5 @@
 {
-  "name": "hermes-claude-bridge",
+  "name": "hermes-agent-bridge",
   "version": "0.4.0",
   "description": "Two-way messaging between Claude Code sessions and Hermes Agent sessions: Hermes asks idle Claude sessions for help through a ticket, Claude messages a running Hermes chat through its inbox. Hardened for public use: validated refs, read-then-claim delivery, secret scrubbing, nonce-fenced peer data, a hop cap and pointer-only headless sends.",
   "author": {
