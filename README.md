@@ -95,3 +95,8 @@ MIT. See [LICENSE](LICENSE). Release notes are in [CHANGELOG.md](CHANGELOG.md).
 ---
 
 Want agent workflows like these built for your team? [CyberAutomations](https://cyberautomations.com) designs and runs AI automation for small businesses and creators.
+
+
+<!-- ca-tracked-link -->
+---
+Built by [CyberAutomations](https://cyberautomations.com/?utm_source=github&utm_medium=readme&utm_campaign=agent-skills). Need something like this built for your business? Start there.
