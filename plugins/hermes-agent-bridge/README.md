@@ -1,4 +1,4 @@
-# hermes-claude-bridge
+# hermes-agent-bridge
 
 Two-way messaging between [Claude Code](https://claude.com/claude-code) sessions and [Hermes Agent](https://github.com/NousResearch/hermes-agent) sessions on the same machine.
 
@@ -25,7 +25,7 @@ Requirements: Python 3.9+, Claude Code (`claude` on PATH or in `~/.local/bin`), 
 
 ```
 /plugin marketplace add dexteon/agent-skills
-/plugin install hermes-claude-bridge@dexteon-agent-skills
+/plugin install hermes-agent-bridge@dexteon-agent-skills
 ```
 
 Or copy `skills/hermes-relay-volunteer/` into `~/.claude/skills/`.

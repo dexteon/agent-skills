@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Offline tests for the hermes-claude-bridge plugin. No network, no claude CLI,
+"""Offline tests for the hermes-agent-bridge plugin. No network, no claude CLI,
 no running Hermes: everything happens in a temp relay root.
 
   python tests/test_bridge.py          run all tests

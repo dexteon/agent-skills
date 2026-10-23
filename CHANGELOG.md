@@ -1,8 +1,8 @@
 # Changelog
 
-## v0.4.0 (unreleased)
+## v0.4.0 (2026-10-22)
 
-- New **hermes-claude-bridge** plugin: two-way messaging between Claude Code and Hermes Agent sessions through files under a relay root.
+- New **hermes-agent-bridge** plugin: two-way messaging between Claude Code and Hermes Agent sessions through files under a relay root.
   - `hermes-relay-volunteer` (Claude Code skill) with `hermes_msg.py`: read relay pointers as data, volunteer for a Hermes ticket, write `reply.md` via a temp file and rename, message a running Hermes chat.
   - `claude-relay` (Hermes skill) with `relay.py`: `ask` finds idle Claude sessions and returns a volunteer's reply inside a nonce fence; `direct` sends one message.
   - `claude-inbox` (Hermes plugin, needs Hermes 0.21.3+): per-process inbox, delivered once as a new turn when the chat is idle or with the next turn.

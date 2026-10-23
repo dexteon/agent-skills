@@ -23,9 +23,9 @@
       "source": "./plugins/multi-agent-orchestration"
     },
     {
-      "name": "hermes-claude-bridge",
+      "name": "hermes-agent-bridge",
       "description": "Two-way messaging between Claude Code and Hermes Agent sessions: Hermes asks idle Claude sessions for help, Claude messages a running Hermes chat. Validated refs, scrubbed and fenced peer data, hop cap, pointer-only headless sends.",
-      "source": "./plugins/hermes-claude-bridge"
+      "source": "./plugins/hermes-agent-bridge"
     }
   ]
 }
