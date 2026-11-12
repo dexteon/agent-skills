@@ -136,13 +136,14 @@ Read this before you install.
 - One poller thread per Hermes process, even if the plugin registers twice.
 - Presence files older than 14 days are swept at startup (a closed console never runs `atexit`). Tickets are never deleted.
 - The inbox plugin uses two Hermes internals (`ctx._manager._cli_ref`, `cli._agent_running`), checked on 0.21.3. If a later build renames them, it logs one warning and falls back to delivering with the next turn instead of waking an idle chat.
-- A reply from an open chat depends on the Hermes model actually calling `relay.py direct`. Small models sometimes answer only in their own window; say "reply by running relay.py direct" in the message.
+- A reply from an open chat does not depend on the model. If the Hermes model calls `relay.py direct`, that is the reply. If it answers only in its own window (small models often do), `claude-inbox` sends the turn's final answer back itself when the turn ends, marked as sent automatically. `HERMES_INBOX_AUTOREPLY=0` turns that off.
 
 ## Tests
 
 ```bash
 python tests/test_bridge.py -v
 python tests/test_link_gate.py -v
+python tests/test_autoreply.py -v
 ```
 
 Offline: no network, no `claude` call, no running Hermes. `test_bridge.py` covers ref validation against path traversal, scrub coverage (and that a git SHA survives), read-then-claim, return-to-new on a failed delivery, oversize to `rejected/` once, the hourly cap, the hop and pair caps, the race-free daily counter, volunteer selection, and that the three `relay_common.py` copies are identical. `test_link_gate.py` covers the delete patterns (blocked and allowed command lists), the marker and approval switches, hook registration, and `hermes_ask.py` argument checks.
