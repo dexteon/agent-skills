@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.5.0 (2026-11-11)
+
+- **hermes-agent-bridge** 0.5.0, now also a standalone repo: https://github.com/dexteon/hermes-agent-bridge
+  - New `hermes_ask.py`: a Claude session sends Hermes a message or work order and gets the reply in the same call, with no Hermes chat open. One headless Hermes turn per call, any profile, named threads that keep their history. `--to <ref>` wraps the open-chat inbox route; `--list` shows what is reachable.
+  - New `claude-link-gate` Hermes plugin: runs started by `hermes_ask.py` are marked `HERMES_CLAUDE_LINK=1`, and on those runs terminal commands and code that delete or destroy data are blocked until the user approves (`--allow-delete`). Added because a permanent Hermes `command_allowlist` is checked before any "nobody present, deny" rule, so an unattended run could delete with no prompt.
+  - README explains why the bridge does not send through the Hermes API server: its turns are unattended and cannot be marked per request.
+  - New offline tests in `tests/test_link_gate.py`.
+
 ## v0.4.0 (2026-10-22)
 
 - New **hermes-agent-bridge** plugin: two-way messaging between Claude Code and Hermes Agent sessions through files under a relay root.

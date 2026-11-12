@@ -1,0 +1,10 @@
+name: claude-link-gate
+version: "0.1.0"
+description: Delete gate for work a Claude Code session sends through hermes_ask.py. On runs marked HERMES_CLAUDE_LINK=1 it blocks terminal commands and executed code that delete or destroy data (rm, Remove-Item, git reset --hard, force push, DROP TABLE, rmtree and similar) and tells the agent to report what it wanted to delete, so the sender can ask the user. Unmarked runs are untouched. A guard against accidents, not a sandbox.
+author: CyberAutomations
+license: MIT
+requires_hermes: ">=0.21.3"
+hooks:
+  - pre_tool_call
+provides_hooks:
+  - pre_tool_call
