@@ -65,7 +65,7 @@ Limits, stated plainly:
 - **It only covers profiles where the plugin is enabled.** A profile without it runs marked work ungated.
 - **It covers the headless routes only.** The `--to` route lands in a chat the user has open, where Hermes's normal approval prompts apply.
 - Hermes's own single-query rule may refuse a flagged command even after `--allow-delete`. In that case the user runs it in their own Hermes chat.
-- The gate logic was live-tested inside a private guard plugin that calls the same `check()`. The standalone `claude-link-gate` wrapper here is covered by the offline tests; run step 5 of the install to prove it on your build.
+- Live-tested on Hermes 0.21.3 in a profile with only this plugin enabled: a forced `rm -rf` came back blocked and the folder survived. Run step 5 of the install to prove it on your build.
 
 ## Install
 
@@ -83,7 +83,7 @@ Copy `skills/hermes-relay-volunteer/` into `~/.claude/skills/`. Or install it as
 `<hermes-home>` below is your Hermes home folder (`%LOCALAPPDATA%\hermes` on Windows, `~/.hermes` elsewhere); a profile lives under `<hermes-home>/profiles/<profile>`.
 
 1. Copy the skill: `hermes/claude-relay/` to `<hermes-home>/skills/autonomous-ai-agents/claude-relay/`.
-2. Copy the delete gate into **every profile `hermes_ask.py` may address**: `hermes/claude-link-gate/` to `<hermes-home>/plugins/claude-link-gate/` for the default profile and `<hermes-home>/profiles/<profile>/plugins/claude-link-gate/` for each named one. Enable it the way your Hermes build enables directory plugins (`hermes plugins list` shows it), and check it with `hermes plugins validate <that folder>`.
+2. Copy the delete gate into **every profile `hermes_ask.py` may address**: `hermes/claude-link-gate/` to `<hermes-home>/plugins/claude-link-gate/` for the default profile and `<hermes-home>/profiles/<profile>/plugins/claude-link-gate/` for each named one. Enable it with `hermes -p <profile> plugins enable claude-link-gate` (`hermes plugins list` shows it; from a script, close stdin, because `enable` asks a yes/no question about tool overrides, and the answer no is fine), and check it with `hermes plugins validate <that folder>`.
 3. Copy the inbox plugin into the profile that runs your interactive chat: `hermes/claude-inbox/` to `<hermes-home>/profiles/<profile>/plugins/claude-inbox/` (or `<hermes-home>/plugins/claude-inbox/` for the default profile), and enable it the same way. Only needed for the `--to` route.
 4. **Restart any open Hermes chat.** Plugins are imported once at startup; a running session keeps the old code until it restarts.
 5. Prove the gate before you trust it: make a scratch folder, run `hermes_ask.py --text "Run: rm -rf <that folder>. Paste the exact tool result."`, and check the folder is still there and the reply quotes `CLAUDE LINK GATE`.
