@@ -64,7 +64,7 @@ Limits, stated plainly:
 - **It is a guard against accidents and casual requests, not a sandbox.** A regex cannot see every way to destroy data. Do not rely on it against an agent that is trying to get around it.
 - **It only covers profiles where the plugin is enabled.** A profile without it runs marked work ungated.
 - **It covers the headless routes only.** The `--to` route lands in a chat the user has open, where Hermes's normal approval prompts apply.
-- Hermes's own single-query rule may refuse a flagged command even after `--allow-delete`. In that case the user runs it in their own Hermes chat.
+- `--allow-delete` lifts the gate and also passes `--yolo`, because Hermes's single-query rule otherwise refuses flagged commands when nobody is present. That run has no approval checks at all, so use it only for the deletion the user approved, and say exactly what to delete in the message.
 - Live-tested on Hermes 0.21.3 in a profile with only this plugin enabled: a forced `rm -rf` came back blocked and the folder survived. Run step 5 of the install to prove it on your build.
 
 ## Install
