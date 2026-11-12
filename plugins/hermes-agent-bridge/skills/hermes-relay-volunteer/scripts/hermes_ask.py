@@ -83,7 +83,8 @@ def _ask(profile, text, thread, timeout, safe=False, allow_delete=False):
             fh.write(text)
         proc = subprocess.run(
             head + ["chat", "-Q", "--source", "tool", "-c", thread,
-                    "--create-if-missing", "--query-file", qpath] + tools,
+                    "--create-if-missing", "--query-file", qpath] + tools
+            + (["--yolo"] if allow_delete else []),
             stdin=subprocess.DEVNULL, capture_output=True, timeout=timeout,
             encoding="utf-8", errors="replace", env=env,
         )
@@ -156,7 +157,7 @@ def main():
     ap.add_argument("--profile", help="run as this Hermes profile (default profile if omitted)")
     ap.add_argument("--safe", action="store_true", help="no terminal or other acting tools")
     ap.add_argument("--allow-delete", action="store_true",
-                    help="lift the delete gate for this run; only after the user approved the deletion")
+                    help="lift the delete gate AND Hermes's own approval checks for this run; only after the user approved the deletion")
     ap.add_argument("--to", help="ref of one open Hermes chat (file inbox)")
     ap.add_argument("--hop", type=int, default=1, help="with --to: 1 new, N+1 answering hop N")
     ap.add_argument("--text")
