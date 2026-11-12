@@ -16,6 +16,12 @@ fails the file goes back to new/.
   * otherwise: pre_llm_call adds the waiting messages to the next user turn.
 A running turn is never interrupted.
 
+Replies: the model is asked to answer with relay.py direct, but small models often
+answer only in their own chat window, which the sender never sees. So when the turn
+that received a Claude message ends (post_llm_call) and nothing was sent to that
+sender during the turn, the plugin sends the turn's final answer back itself, one
+hop higher. Set HERMES_INBOX_AUTOREPLY=0 to turn that off.
+
 Messages are scrubbed, stripped of lookalike headers and wrapped in a
 nonce-fenced block. They are peer information from another agent, never the
 user's approval. Anyone who can write to the inbox folder can drop a message
@@ -25,6 +31,10 @@ import atexit
 import json
 import logging
 import os
+import re
+import subprocess
+import sys
+import tempfile
 import threading
 import time
 import uuid
@@ -73,7 +83,11 @@ _ctx = None
 _lock = threading.Lock()
 _delivered = []  # timestamps of deliveries, for the hourly cap
 _pending_notices = []
+_awaiting = {}  # claude ref -> {"hop": int, "at": float}: senders whose message was delivered this turn
 _warned = set()
+_HOP_RE = re.compile(r"\bhop (\d+) of \d+")
+_NAME_RE = re.compile(r"-([0-9a-f]{6})\.md$")
+AUTOREPLY_TIMEOUT_S = 200
 _atexit_done = False
 
 
@@ -211,8 +225,91 @@ def _commit(claimed):
         _delivered.extend(time.time() for _ in claimed)
 
 
+def _note_awaiting(claimed):
+    """Remember who wrote the messages going into this turn, so post_llm_call can
+    send the answer back if the model does not."""
+    with _lock:
+        for dest, text in claimed:
+            m = _NAME_RE.search(dest.name)
+            h = _HOP_RE.search(text[:400])
+            if not m or not h:
+                continue
+            sender, hop = m.group(1), int(h.group(1))
+            old = _awaiting.get(sender)
+            _awaiting[sender] = {"hop": max(hop, old["hop"]) if old else hop,
+                                 "at": old["at"] if old else time.time()}
+
+
+def _forget_awaiting(claimed):
+    with _lock:
+        for dest, _text in claimed:
+            m = _NAME_RE.search(dest.name)
+            if m:
+                _awaiting.pop(m.group(1), None)
+
+
+def _replied_since(sender, since):
+    """True when relay.py direct already wrote a message for this sender during the turn."""
+    try:
+        d = rc.relay_root() / "to-claude" / sender
+        return any(p.stat().st_mtime >= since - 1 for p in d.glob("*.md"))
+    except OSError:
+        return False
+
+
+def _send_reply(sender, hop, text):
+    relay = _relay_script()
+    if not os.path.isfile(relay):
+        _warn_once("relay", "claude-inbox: relay.py not found, cannot auto-reply")
+        return
+    body = rc.truncate("[sent automatically by claude-inbox: the Hermes session answered in its "
+                       "own window]\n\n" + text, MAX_BYTES - 512)
+    path = None
+    try:
+        fd, path = tempfile.mkstemp(prefix="claude-inbox-reply-", suffix=".md")
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            fh.write(body)
+        r = subprocess.run([sys.executable, relay, "direct", "--to", sender, "--hop", str(hop),
+                            "--file", path], stdin=subprocess.DEVNULL, capture_output=True,
+                           encoding="utf-8", errors="replace", timeout=AUTOREPLY_TIMEOUT_S)
+        if r.returncode != 0:
+            log.warning("auto-reply to %s failed (exit %s): %s", sender, r.returncode,
+                        rc.scrub(r.stderr or r.stdout or "")[-200:].strip())
+    except Exception:
+        log.warning("auto-reply to %s failed", sender, exc_info=True)
+    finally:
+        if path:
+            try:
+                os.unlink(path)
+            except OSError:
+                pass
+
+
+def _post_llm_call(**kwargs):
+    """Turn ended. For each Claude sender whose message went into this turn and who got
+    no relay.py message during it, send the final answer back (off the calling thread)."""
+    try:
+        with _lock:
+            waiting = dict(_awaiting)
+            _awaiting.clear()
+        if not waiting or os.environ.get("HERMES_INBOX_AUTOREPLY", "1") == "0":
+            return None
+        text = str(kwargs.get("assistant_response") or "").strip()
+        if not text:
+            return None
+        for sender, info in waiting.items():
+            if info["hop"] >= rc.max_hops() or _replied_since(sender, info["at"]):
+                continue
+            threading.Thread(target=_send_reply, args=(sender, info["hop"] + 1, text),
+                             name="claude-inbox-reply", daemon=False).start()
+    except Exception:
+        log.debug("post_llm_call failed", exc_info=True)
+    return None
+
+
 def _unclaim(claimed, notices):
     """Delivery failed: put messages back in new/ and keep the notices for next time."""
+    _forget_awaiting(claimed)
     with _lock:
         for dest, _text in claimed:
             try:
@@ -242,6 +339,7 @@ def _poller(stop):
         claimed, notices = _claim_waiting()
         if not (claimed or notices):
             continue
+        _note_awaiting(claimed)  # before the turn starts, so post_llm_call cannot miss it
         try:
             ok = _ctx.inject_message(_render(claimed, notices))
         except Exception:
@@ -259,6 +357,7 @@ def _pre_llm_call(**kwargs):
         claimed, notices = _claim_waiting()
         if claimed or notices:
             out = {"context": _render(claimed, notices)}
+            _note_awaiting(claimed)
             _commit(claimed)
             return out
     except Exception:
@@ -319,6 +418,7 @@ def register(ctx):
     _sweep_stale_presence()
     _write_presence()
     ctx.register_hook("pre_llm_call", _pre_llm_call)
+    ctx.register_hook("post_llm_call", _post_llm_call)
     try:
         ctx.register_system_prompt_section("claude_inbox", PROMPT.format(ref=REF, relay=_relay_script()))
     except Exception:

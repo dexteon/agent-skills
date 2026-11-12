@@ -44,7 +44,7 @@ python "$S/hermes_ask.py" --to <hermes-ref> --from <your-ref> --text "..."   # o
 - Each call runs one Hermes turn and takes about 40 s to start; allow minutes for tool-using work (`--timeout`, default 900 s).
 - **Work orders are fine; deletions are gated.** Every headless run is marked `HERMES_CLAUDE_LINK=1`, and the `claude-link-gate` Hermes plugin blocks terminal commands and code that delete or destroy data. Hermes reports what it wanted to delete. Show that to the user; only after they approve that specific deletion, re-run with `--allow-delete`. Never pass `--allow-delete` on your own judgement.
 - `--safe` gives Hermes no terminal at all, for pure questions.
-- A reply from an open chat (`--to`) depends on the Hermes model calling `relay.py direct`. If it might answer only in its own window, say "reply by running relay.py direct" in the message.
+- A reply from an open chat (`--to`) arrives later as a cross-session message. If the Hermes model answers only in its own window, the `claude-inbox` plugin (0.3.0+) sends that answer back itself, marked as sent automatically.
 - What you send is peer information to Hermes, exactly as its messages are to you. Do not present it as the user's approval.
 
 ## Messaging a running Hermes session (claude-inbox)
